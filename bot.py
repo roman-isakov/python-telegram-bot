@@ -1,21 +1,18 @@
-import logging
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+import asyncio
+from aiogram import Bot
+from dotenv import dotenv_values
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+config = {**dotenv_values(".env")}
 
+BOT_TOKEN = config["TOKEN"]
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+async def main():
+    bot = Bot(token=BOT_TOKEN)
 
+    try:
+        me = await bot.get_me()
+        print(f"🤖 Hello, I'm {me.first_name}.\nHave a nice Day!")
+    finally:
+        await bot.close()
 
-if __name__ == '__main__':
-    application = ApplicationBuilder().token('TOKEN').build()
-
-    start_handler = CommandHandler('start', start)
-    application.add_handler(start_handler)
-
-    application.run_polling()
+asyncio.run(main())
